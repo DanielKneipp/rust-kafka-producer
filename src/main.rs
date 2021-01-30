@@ -60,7 +60,10 @@ async fn produce(topic: &str, brokers: &str) {
             FutureRecord::to(topic)
                 .payload(&payload)
                 .key(&key)
-                .headers(OwnedHeaders::new().add("header_key", "header_value")),
+                .headers(OwnedHeaders::new().add(
+                    &format!("header_key_{}", count), 
+                    &format!("header_value_{}", count)
+                )),
             Duration::from_secs(0)
         ).await;
 
@@ -69,7 +72,7 @@ async fn produce(topic: &str, brokers: &str) {
         count = count + 1;
         
         info!("Sleeping for 1 second");
-        sleep(Duration::from_secs(5)).await;
+        sleep(Duration::from_secs(1)).await;
         info!("Done sleeping");
     }
 }
