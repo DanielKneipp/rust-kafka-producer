@@ -17,7 +17,7 @@ async fn main() {
 
     let matches = App::new("producer")
         .version(option_env!("CARGO_PKG_VERSION").unwrap_or(""))
-        .arg(Arg::new("prokers")
+        .arg(Arg::new("brokers")
             .short('b')
             .long("brokers")
             .takes_value(true)
@@ -28,13 +28,13 @@ async fn main() {
             .takes_value(true)
         )
         .get_matches();
-    
+
     let (version_n, version_s) = get_rdkafka_version();
     info!("rd_kafka_version: 0x{:08x}, {}", version_n, version_s);
 
     let topic = matches.value_of("topic").unwrap_or("test");
     let brokers = matches.value_of("brokers").unwrap_or("127.0.0.1:9094");
-    
+
     info!("Going to produce");
     produce(topic, brokers).await;
     info!("Out of produce");
@@ -61,7 +61,7 @@ async fn produce(topic: &str, brokers: &str) {
                 .payload(&payload)
                 .key(&key)
                 .headers(OwnedHeaders::new().add(
-                    &format!("header_key_{}", count), 
+                    &format!("header_key_{}", count),
                     &format!("header_value_{}", count)
                 )),
             Duration::from_secs(0)
@@ -70,7 +70,7 @@ async fn produce(topic: &str, brokers: &str) {
         info!("Status '{:?}' received from message '{}'", status, count);
 
         count = count + 1;
-        
+
         info!("Sleeping for 1 second");
         sleep(Duration::from_secs(1)).await;
         info!("Done sleeping");
